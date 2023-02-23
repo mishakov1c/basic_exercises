@@ -5,6 +5,8 @@
 # Маша: 2
 # Петя: 2
 
+from collections import Counter
+
 students = [
     {'first_name': 'Вася'},
     {'first_name': 'Петя'},
@@ -13,7 +15,11 @@ students = [
     {'first_name': 'Петя'},
 ]
 # ???
+temp_list = [student['first_name'] for student in students]
 
+count = Counter(temp_list)
+for key, value in count.items():
+    print(f'{key}: {value}')
 
 # Задание 2
 # Дан список учеников, нужно вывести самое часто повторящееся имя
@@ -27,7 +33,12 @@ students = [
     {'first_name': 'Оля'},
 ]
 # ???
-
+temp_list = [student['first_name'] for student in students]
+count = Counter(temp_list)
+max_value = max(count.values())
+for k, v in count.items():
+    if v == max_value:
+        print(f'Самое частое имя среди учеников: {k}')
 
 # Задание 3
 # Есть список учеников в нескольких классах, нужно вывести самое частое имя в каждом классе.
@@ -52,7 +63,15 @@ school_students = [
     ],
 ]
 # ???
-
+grade_number = 1
+for grade in school_students:
+    group = [student['first_name'] for student in grade]
+    dict = Counter(group)
+    max_in_group = max(dict.values())
+    for k, v in dict.items():
+        if v == max_in_group:
+            print(f'Самое частое имя в классе {grade_number}: {k}')
+    grade_number += 1
 
 # Задание 4
 # Для каждого класса нужно вывести количество девочек и мальчиков в нём.
@@ -73,7 +92,29 @@ is_male = {
     'Даша': False,
 }
 # ???
+temp_dict = {}
 
+for line in school:
+    students = line['students']
+    students_list = [student['first_name'] for student in students]
+
+    existing_key = temp_dict.get(line['class'])
+    if existing_key != None:
+        existing_key += students_list
+    else:
+        temp_dict[line['class']] = students_list
+
+for key, value in temp_dict.items():
+    boys = 0
+    girls = 0
+    for student in value:
+        if is_male.get(student):
+            boys += 1
+        else:
+            girls += 1
+    print(f'Класс {key}: девочки {girls}, мальчики {boys}')
+
+# print(temp_dict) 
 
 # Задание 5
 # По информации о учениках разных классов нужно найти класс, в котором больше всего девочек и больше всего мальчиков
@@ -92,4 +133,38 @@ is_male = {
     'Миша': True,
 }
 # ???
+temp_dict = {}
 
+for line in school:
+    students = line['students']
+    students_list = [student['first_name'] for student in students]
+
+    existing_key = temp_dict.get(line['class'])
+    if existing_key != None:
+        existing_key += students_list
+    else:
+        temp_dict[line['class']] = students_list
+
+result_boys = {'boys': 0, 'grade': ''}
+result_girls = {'girls': 0, 'grade': ''}
+
+for key, value in temp_dict.items():
+    boys = 0
+    girls = 0
+    for student in value:
+        if is_male.get(student):
+            boys += 1
+        else:
+            girls += 1
+    
+    if girls > result_girls.get('girls', 0):
+        result_girls['girls'] = girls
+        result_girls['grade'] = key
+
+    if boys > result_boys.get('boys', 0):
+        result_boys['boys'] = boys
+        result_boys['grade'] = key
+    
+
+print(f"Больше всего мальчиков в классе {result_boys['grade']}")
+print(f"Больше всего девочек в классе {result_girls['grade']}")
